@@ -1,14 +1,6 @@
 import { useLocalStorage } from "@/hooks/use-local-storage"; // Import
 
 export async function identifyVehicle(imageData: ArrayBuffer) {
-
-  // Check for sufficient tokens using the hook
-    const [, , decrementToken] = useLocalStorage<number>('tokens', 0);
-    if (!decrementToken()) { // Attempt to decrement, check result
-        throw new Error('Insufficient tokens to identify vehicle.'); // Throw error
-    }
-
-
   // Convert ArrayBuffer to Base64 using FileReader
   const blob = new Blob([imageData]);
   const base64Image = await new Promise<string>((resolve, reject) => {
@@ -161,14 +153,8 @@ export async function identifyVehicle(imageData: ArrayBuffer) {
       features: Array.isArray(parsedData.features) ? parsedData.features : []
     };
 
-    // Token deduction moved BEFORE the API call
-    // if (typeof window !== 'undefined') {
-    //   const storedTokens = localStorage.getItem('tokens');
-    //   let currentTokens = storedTokens ? parseInt(storedTokens, 10) : 0;
-    //   localStorage.setItem('tokens', String(currentTokens - 1));
-    // }
-    
     return validatedData;
+
   } catch (error) {
     console.error('Failed to parse vehicle data:', error, '\nResponse text:', data.candidates[0].content.parts[0].text);
     throw new Error('Failed to parse vehicle identification response');

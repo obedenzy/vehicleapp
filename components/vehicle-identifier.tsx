@@ -17,11 +17,12 @@ interface VehicleHistory {
   image: string;
   timestamp: Date;
   details: any;
+  id: string; // Add ID
 }
 
 export default function VehicleIdentifier() {
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(null); // Keep for displaying the image
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [vehicleData, setVehicleData] = useState<any>(null);
@@ -37,7 +38,7 @@ export default function VehicleIdentifier() {
   const router = useRouter();
 
     // Use the hook to manage tokens
-  const [tokens, setTokens] = useLocalStorage<number>('tokens', 0);
+  const [tokens, setTokens, decrementToken] = useLocalStorage<number>('tokens', 0);
 
 
   const addToHistory = (data: any, base64Image: string) => { // Changed parameter
@@ -48,8 +49,9 @@ export default function VehicleIdentifier() {
       image: base64Image, // Store base64 data
       details: data,
       timestamp: new Date(),
+      id: crypto.randomUUID(), // Generate a unique ID
     };
-    
+
     const updatedHistory = [newEntry, ...history].slice(0, 10); // Keep last 10 entries
     setHistory(updatedHistory);
     localStorage.setItem('vehicleHistory', JSON.stringify(updatedHistory));
@@ -91,9 +93,9 @@ export default function VehicleIdentifier() {
       setVehicleData(null);
 
       const buffer = await imageFile.arrayBuffer();
-      const result = await identifyVehicle(buffer); // This will now throw if insufficient tokens
+      const result = await identifyVehicle(buffer); // Await the API call
 
-      setVehicleData(result);
+      setVehicleData(result); // Set vehicle data *after* successful API call
       // Store the Base64 data, not the object URL
       if (imageFile) {
         const reader = new FileReader();

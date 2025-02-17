@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   // Custom event name
   const localStorageEventName = 'localStorageChange';
 
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once on the client
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
@@ -33,6 +35,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
   }, [key, storedValue]);
 
+  // Function to decrement tokens, returning true on success, false on failure
   const decrementToken = useCallback((): boolean => {
       let success = false;
       setValue((prevTokens: any) => {
@@ -41,28 +44,10 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
               success = true;
               return currentTokens - 1;
           }
-          return currentTokens;
+          return currentTokens; // Return original value if not enough tokens
       });
       return success;
   }, [setValue]);
-
-    useEffect(() => {
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === key && e.newValue) {
-                try {
-                    setStoredValue(JSON.parse(e.newValue));
-                } catch (error) {
-                    console.error("Error parsing localStorage value:", error);
-                }
-            }
-        };
-
-        window.addEventListener(localStorageEventName, handleStorageChange);
-
-        return () => {
-            window.removeEventListener(localStorageEventName, handleStorageChange);
-        };
-    }, [key]);
 
   return [storedValue, setValue, decrementToken] as const;
 }

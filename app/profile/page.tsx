@@ -4,8 +4,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Settings, Bell, Shield, GamepadIcon, Coins, DollarSign, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalStorage } from '@/hooks/use-local-storage'; // Import
 
 export default function ProfilePage() {
+  const [tokens] = useLocalStorage<number>('tokens', 0); // Get tokens
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8">Profile</h1>
@@ -32,7 +35,7 @@ export default function ProfilePage() {
             <div>
               <h2 className="text-xl font-semibold">Tokens</h2>
               <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold">50</span>
+                <span className="text-2xl font-bold">{tokens}</span> {/* Display tokens */}
                 <span className="text-muted-foreground">available</span>
               </div>
             </div>

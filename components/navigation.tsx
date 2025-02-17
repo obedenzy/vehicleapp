@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Home, User, History, Menu, Scan, Gamepad2, Plus, Coins } from 'lucide-react';
@@ -67,4 +66,48 @@ export default function Navigation() {
               </SheetTrigger>
               <SheetContent
                 side="right"
-                className="w-[300px] sm:w-[400px] p
+                className="w-[300px] sm:w-[400px] p-0"
+              >
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <div className="flex flex-col h-full">
+                  <div className="border-b p-4">
+                    <div className="flex items-center gap-2">
+                      <Scan className="h-6 w-6" />
+                      <span className="font-bold text-lg">Vehicle AI</span>
+                    </div>
+                  </div>
+                  <nav className="flex-1 p-4">
+                    <div className="flex flex-col space-y-2">
+                      {links.map(({ href, icon: Icon, label }) => {
+                        const isActive = pathname === href || (pathname.startsWith('/games') && href ==='/games/templates');
+                        return (
+                          <Link
+                            key={href}
+                            href={href}
+                            className={cn(
+                              'flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors',
+                              isActive
+                                ? 'bg-primary text-primary-foreground'
+                                : 'hover:bg-muted'
+                            )}
+                          >
+                            <Icon className="h-5 w-5" />
+                            <span className="font-medium">{label}</span>
+                          </Link>
+                        );
+                      })}
+                      <div className="flex items-center gap-2 mt-4">
+                        <Coins className="h-5 w-5 text-primary" />
+                        <span className="font-medium">{tokens}</span>
+                      </div>
+                    </div>
+                  </nav>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
